@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: online-shop-sources
+
+  main:
+    lazy-initialization: false
+
+kafka:
+  bootstrap-servers: ${KAFKA_SERVER:10.110.29.76:9092,10.110.32.212:9092,10.110.24.83:9092}
+
+
+logging:
+  level:
+    ROOT: info
