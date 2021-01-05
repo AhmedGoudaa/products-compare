@@ -11,11 +11,15 @@
  is built using reactive kafka that integrate reactive streams with kafka API  
    
 
-#### Following the reactive architecture the high level overview of project structure   
-![Image of Yaktocat](digram.png)
+## Following the reactive architecture the high level overview of project structure ##   
+![Image of Yaktocat](../digram.png)
    
 
-
+### what is missing ###
+1. Separating the projection consumer to be a separate service using kafka-connect
+2. using elastic search cluster as a primary source of data
+3. using kubernetes  
+4. more test coverage 
 
 
 ## Requirement ##
