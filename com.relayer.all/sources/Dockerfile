@@ -1,6 +1,7 @@
 FROM openjdk:15-jdk-alpine As packager
 
 
+# create a custom JRE image to reduce the size of docker image from 500MB to 99MB
 RUN jlink \
     --add-modules java.base,java.sql,java.desktop,jdk.unsupported,java.naming,java.management,java.instrument,java.security.jgss,jdk.crypto.ec,jdk.crypto.cryptoki,jdk.management.agent \
         --compress 2 \
