@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  reader-with-projection:
+    build:
+      context: reader-with-projection
+      dockerfile: Dockerfile
+    environment:
+      KAFKA_SERVER: kafka:9092
+      DB_URL: jdbc:mysql://mysql_db:3306/my_db?useSSL=false&allowPublicKeyRetrieval=true&&rewriteBatchedStatements=true&profileSQL=true
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql_db
+      - kafka
+    networks:
+      - app
+    ports:
+      - 8080:8080
+
+  # s2
+  sources:
+    build:
+      context: sources
+      dockerfile: Dockerfile
+    environment:
+      KAFKA_SERVER: kafka:9092
+    depends_on:
+      - reader-with-projection
+      - kafka
+    networks:
+      - app
+    ports:
+      - 8081:8081
+
+
+  # Database Service (Mysql)
+  mysql_db:
+    image: mysql
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      MYSQL_DATABASE: my_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - app
+    volumes:
+      - my_db_data_x:/var/lib/mysql
+
+  # kafka with zookeeeper
+  # docker run -p 2181:2181 -p 9092:9092 -e ADVERTISED_HOST=127.0.0.1  -e NUM_PARTITIONS=10 johnnypark/kafka-zookeeper
+  kafka:
+    image: johnnypark/kafka-zookeeper
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    restart: always
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_CREATE_TOPICS: product:6:3
+      KAFKA_MESSAGE_MAX_BYTES: 2000000
+    networks:
+      - app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  app:
+
+volumes:
+  my_db_data_x:
