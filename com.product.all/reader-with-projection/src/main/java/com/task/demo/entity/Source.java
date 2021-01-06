@@ -24,7 +24,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 
 @Entity
-@Table(name = "source", catalog = "my_db")
+@Table(name = "source")
 public class Source implements Serializable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)

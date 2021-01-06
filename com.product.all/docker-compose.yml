@@ -42,7 +42,7 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: my_db
-      MYSQL_USER: root
+#      MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
     networks:

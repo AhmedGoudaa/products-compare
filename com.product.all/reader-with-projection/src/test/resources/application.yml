@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: online-shop
+
+  main:
+    lazy-initialization: false
+
+
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://192.168.99.100/my_db?useSSL=false&useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&useLocalSessionState=true&cachePrepStmts=true&prepStmtCacheSize=250&prepStmtCacheSqlLimit=2048&profileSQL=true}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 30
+
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.jdbc.batch_versioned_data: true
+      hibernate.jdbc.batch_size: ${JDBC_BATCH_SIZE:500}
+
+  flyway:
+    enabled: true
+    url: ${DB_URL:jdbc:mysql://192.168.99.100:3306}
+    schemas: my_db
+    user: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
+
+kafka:
+  bootstrap-servers: ${KAFKA_SERVER:10.110.29.76:9092,10.110.32.212:9092,10.110.24.83:9092}
+
+
+logging:
+  level:
+    ROOT: info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

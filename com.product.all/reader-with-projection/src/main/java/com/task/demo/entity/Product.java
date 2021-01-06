@@ -19,6 +19,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -26,10 +27,11 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Setter
 @Getter
+@With
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 
 @Entity
-@Table(name = "category", catalog = "my_db")
+@Table(name = "product")
 public class Product implements Serializable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)

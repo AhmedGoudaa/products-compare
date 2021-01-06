@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import static com.task.demo.config.AppConfig.JDBC_SCHEDULER;
@@ -29,6 +30,12 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Mono<List<Product>> search(int categoryId, String name) {
 		return Mono.fromCallable(() -> productRepository.findProductByNameAndCategory(name, categoryId))
+			.subscribeOn(jdbcScheduler);
+	}
+
+	@Override
+	public Mono<List<Product>> search(int categoryId, String name, Pageable pageable) {
+		return Mono.fromCallable(() -> productRepository.findProductByNameAndCategory(name, categoryId, pageable))
 			.subscribeOn(jdbcScheduler);
 	}
 

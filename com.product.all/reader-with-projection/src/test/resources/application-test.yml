@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: online-shop
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:MY_DB;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS MY_DB
+    password: ''
+    username: sa
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+
+  main:
+    lazy-initialization: false
+
+  flyway:
+    enabled: false
+
+
+
+logging:
+  level:
+    ROOT: debug

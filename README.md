@@ -8,7 +8,10 @@
    built using reactor reactive stream on jvm  and high performance batch db writing using jdbc template api
 
 ## Sources scraping and mapping ##
- is built using reactive kafka that integrate reactive streams with kafka API  
+ is built using reactive kafka that integrate reactive streams with kafka API 
+ it's also use protobuf serialization protocol in the published messages
+ and communication between the producer and consumer. 
+   
    
 
 ## Following the reactive architecture the high level structure ##   
