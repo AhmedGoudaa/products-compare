@@ -27,24 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/product")
 @Value
-public class Controller {
+public class ProductController {
 
-	CategoryService categoryService;
-	CategoryMapper categoryMapper;
 	ProductService productService;
 	ProductMapper productMapper;
 
-
-	@GetMapping("category")
-	public Mono<List<CategoryResponse>> getAllCategories() {
-		return categoryService.findAll()
-			.map(categoryMapper::mapToResponse);
-	}
-
-
-	@GetMapping("category/{id}/product/{name}")
+	@GetMapping("/{name}/category/{id}")
 	public Mono<List<ProductResponse>> getProducts(
 		@PathVariable @Valid @NotNull Integer id,
 		@PathVariable @Valid @NotNull String name
@@ -53,7 +43,7 @@ public class Controller {
 			.map(productMapper::mapToResponse);
 	}
 
-	@GetMapping("paginated/category/{id}/product/{name}")
+	@GetMapping("/paginated/{name}/category/{id}")
 	public Mono<List<ProductResponse>> getProducts(
 		@PathVariable @Valid @NotNull Integer id,
 		@PathVariable @Valid @NotNull String name,

@@ -11,7 +11,6 @@ import com.task.demo.entity.Product;
 import com.task.demo.message.ProductMessage;
 import com.task.demo.service.ProductService;
 import com.task.demo.service.ProductWriterService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import reactor.core.Disposable;
@@ -25,12 +24,26 @@ import reactor.kafka.receiver.ReceiverRecord;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@AllArgsConstructor
+//@AllArgsConstructor
 @Service
 public class ProductConsumer {
 	private final ProductWriterService productWriterService;
 	private final ProductService productReadService;
 	private final KafkaConfig kafkaConfig;
+
+	// we will have 2 different subscribers one for new product and the other is for the updated one
+	private final Sinks.Many<ProductMessage> newProductSource;
+	private final Sinks.Many<Product> updateProductSource;
+
+	ProductConsumer(ProductWriterService productWriterService, ProductService productReadService, KafkaConfig kafkaConfig) {
+		this.productWriterService = productWriterService;
+		this.productReadService = productReadService;
+		this.kafkaConfig = kafkaConfig;
+		newProductSource = Sinks.many().unicast().onBackpressureBuffer();
+		updateProductSource = Sinks.many().unicast().onBackpressureBuffer();
+		initNewProductSink();
+		initUpdatedProductSink();
+	}
 
 	public Disposable receiver() {
 		ReceiverOptions<Integer, ProductMessage> integerMessageReceiverOptions =
@@ -44,26 +57,6 @@ public class ProductConsumer {
 			.subscription(List.of("product"));
 
 
-		// we will have 2 different subscribers one for new product and the other is for the updated one
-		Sinks.Many<ProductMessage> newProductSource = Sinks.many().unicast().onBackpressureBuffer();
-		Sinks.Many<Product> updateProductSource = Sinks.many().unicast().onBackpressureBuffer();
-
-
-		newProductSource
-			.asFlux()
-			.buffer(100)
-			.flatMap(productWriterService::save)
-			.doOnNext(newCount -> log.info("new product count {}", newCount))
-			.subscribe();
-
-		updateProductSource
-			.asFlux()
-			.buffer(100)
-			.flatMap(productWriterService::update)
-			.doOnNext(updatedCount -> log.info("updated count {}", updatedCount))
-			.subscribe();
-
-
 		return KafkaReceiver.create(integerMessageReceiverOptions)
 			.receive()
 			.groupBy(ConsumerRecord::partition)
@@ -71,7 +64,6 @@ public class ProductConsumer {
 				partitionFlux
 					.concatMap(record ->
 					{
-
 						final var productMessage = record.value();
 
 						return productReadService
@@ -114,6 +106,24 @@ public class ProductConsumer {
 				// do nothing
 			}, throwable -> log.error("Error ==> ", throwable));
 
+	}
+
+	private void initUpdatedProductSink() {
+		updateProductSource
+			.asFlux()
+			.buffer(100)
+			.flatMap(productWriterService::update)
+			.doOnNext(updatedCount -> log.info("updated count {}", updatedCount))
+			.subscribe();
+	}
+
+	private void initNewProductSink() {
+		newProductSource
+			.asFlux()
+			.buffer(100)
+			.flatMap(productWriterService::save)
+			.doOnNext(newCount -> log.info("new product count {}", newCount))
+			.subscribe();
 	}
 
 }
